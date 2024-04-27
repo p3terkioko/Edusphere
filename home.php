@@ -64,7 +64,7 @@
 						<div class="col-lg-7">
 
 							<div style="position: relative; margin-bottom: -60px;" class="ohidden" data-height-lg="426" data-height-md="567" data-height-sm="470" data-height-xs="287" data-height-xxs="183">
-								<img src="images/services/macbook.png" style="position: absolute; top: 0; left: 0;" data-animate="fadeInUp" data-delay="100" alt="Chrome">
+								<img src="images/services/macbook1.png" style="position: absolute; top: 0; left: 0;" data-animate="fadeInUp" data-delay="100" alt="Chrome">
 							</div>
 
 						</div>
@@ -130,7 +130,7 @@
 						</div>
 
 						<div class="col-md-4 hidden-sm bottommargin center">
-							<img src="images/services/iphone14.png" alt="iphone 2">
+							<img src="images/services/14pro.png" alt="iphone 2">
 						</div>
 
 						<div class="col-md-4 col-sm-6 bottommargin">

@@ -9,41 +9,23 @@
 				<div class="container clearfix">
 
 					<div class="col_half">
-						<br>
-						Copyrights &copy; 2022 All Rights Reserved by EP<br>
-						
+						Copyrights &copy; 2022 All Rights Reserved by Peter Kioko P15/144253/2022<br>
 					</div>
 
 					<div class="col_half col_last tright">
 						<div class="fright clearfix">
-							<a target="_blank" href="https://www.facebook.com/ExceptionalProgrammers" class="social-icon si-small si-borderless si-facebook">
-								<i class="icon-facebook"></i>
-								<i class="icon-facebook"></i>
+							<a target="_blank" href="https://www.instagram.com/kio.ko_/" class="social-icon si-small si-borderless si-gplus">
+								<i class="icon-instagram"></i>
+								<i class="icon-instagram"></i>
 							</a>
 
-							<a target="_blank" href="https://twitter.com/exceptionalprog" class="social-icon si-small si-borderless si-twitter">
-								<i class="icon-twitter"></i>
-								<i class="icon-twitter"></i>
-							</a>
-
-							<a target="_blank" href="https://www.youtube.com/channel/UCnckIffIs_irwEwIjyoFCtQ" class="social-icon si-small si-borderless si-youtube">
-								<i class="icon-youtube-play"></i>
-								<i class="icon-youtube-play"></i>
-							</a>
-
-							<a target="_blank" href="https://plus.google.com/u/0/111814927807344564394" class="social-icon si-small si-borderless si-gplus">
-								<i class="icon-gplus"></i>
-								<i class="icon-gplus"></i>
-							</a>
-
-							<a target="_blank" href="https://www.dropbox.com/sh/xlbicsv6kp21yhx/AAB2_IhXaStVBNdDxDnEpKQXa?dl=0" class="social-icon si-small si-borderless si-dropbox">
-								<i class="icon-dropbox2"></i>
-								<i class="icon-dropbox2"></i>
-							</a>
-
-							<a target="_blank" href="https://github.com/exceptionalprogrammers" class="social-icon si-small si-borderless si-github">
+							<a target="_blank" href="https://github.com/p3terkioko" class="social-icon si-small si-borderless si-github">
 								<i class="icon-github"></i>
 								<i class="icon-github"></i>
+							</a>
+							<a target="_blank" href="mailto:peterkioko64@gmail.com" class="social-icon si-small si-borderless si-github">
+								<i class="icon-gmail"></i>
+								<i class="icon-gmail"></i>
 							</a>
 
 							
@@ -51,8 +33,10 @@
 
 						<div class="clear"></div>
 
-						<i class="icon-envelope2"></i> exceptionalprogrammers@gmail.com <span class="middot">&middot;</span> <i class="icon-headphones"></i> 1234-1234567  <span class="middot"></span>
+						<i class="icon-envelope2"></i> peterkioko64@gmail.com <span class="middot">&middot;</span> <i class="icon-headphones"></i> 0703844258 <span class="middot"></span>
 					</div>
+
+				</div>
 
 			</div><!-- #copyrights end -->
 

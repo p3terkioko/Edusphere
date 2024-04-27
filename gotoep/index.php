@@ -78,8 +78,8 @@
 
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 	<meta name="author" content="SemiColonWeb" />
-	<link rel="icon" type="image/png" href="images/tab.png" sizes="16x16">
-	<link rel="icon" type="image/png" href="images/tab1.png" sizes="32x32">
+	<link rel="icon" type="image/png" href="images/tabb.png" sizes="16x16">
+	<link rel="icon" type="image/png" href="images/tabb.png" sizes="32x32">
 
 	<!-- Stylesheets
 	============================================= -->
@@ -115,13 +115,13 @@
 
 			<div class="content-wrap nopadding">
 
-				<div class="section nopadding nomargin" style="width: 100%; height: 100%; position: absolute; left: 0; top: 0; background: url('../images/login.png') center center no-repeat; background-size: cover;"></div>
+				<div class="section nopadding nomargin" style="width: 100%; height: 100%; position: absolute; left: 0; top: 0; background: url('../images/loginn.jpg') center center no-repeat; background-size: cover;"></div>
 
 				<div class="section nobg full-screen nopadding nomargin">
 					<div class="container vertical-middle divcenter clearfix">
 
 						<div class="row center">
-							<a href="index.php"><img height="50px" src="../images/logo-footer.png" alt="Exceptional Programmers"></a>
+							<a href="index.php"><img height="50px" src="../images/edusphere1.png" alt="EduSphere Logo"></a>
 						</div>
 
 						<div class="panel panel-default divcenter noradius noborder" style="max-width: 400px; background-color: rgba(255,255,255,0.93);">
@@ -173,7 +173,6 @@
 						</div>
 
 
-						<div class="row center dark"><small>Copyrights &copy; 2022 All Rights Reserved by EP.</small></div>
 
 					</div>
 				</div>

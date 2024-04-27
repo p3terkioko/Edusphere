@@ -4,9 +4,9 @@
 <head>
 
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-	<meta name="author" content="ExceptionalProgrammers" />
-	<link rel="icon" type="image/png" href="images/tab.png" sizes="16x16">
-	<link rel="icon" type="image/png" href="images/tab1.png" sizes="32x32">
+	<meta name="author" content="EduSphere" />
+	<link rel="icon" type="image/png" href="images/tabb.png" sizes="16x16">
+	<link rel="icon" type="image/png" href="images/tabb.png" sizes="32x32">
 
 	<!-- Stylesheets
 	============================================= -->
@@ -27,7 +27,7 @@
 
 	<!-- Document Title
 	============================================= -->
-	<title>Exceptional Programmers</title>
+	<title>EduSphere</title>
 
 <style>
 
