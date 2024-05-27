@@ -1,7 +1,486 @@
 <?php
 
-    // Watch Video From Youtube
+//**************** Library Admin File
+include("../include/config.php");
 
+	if((!isset($_SESSION['userId']) && empty($_SESSION['userId'])) && (!isset($_SESSION['userName']) && empty($_SESSION['userName']))) {
+
+        header('Location: index.php');
+    } else {
+
+        $loginName = $_SESSION['userName'];
+        $loginId = $_SESSION['userId'];
+        $power = $power = $_SESSION['adminType'];
+        $alertMessage = " ";
+
+        /* %%%%%%%%%%%%% START CODE SUBMIT %%%%%%%%%%%% */
+
+        if( isset($_POST['submit']) ){
+
+            if($power == 'yes'){ //***********************
+                
+                //Name Condition  
+                if( isset($_POST['fullname']) && !empty($_POST['fullname'])){
+        
+                    if(preg_match('/^[A-Za-z\s]+$/',$_POST['fullname'])){
+                      $name = mysqli_real_escape_string($connection,$_POST['fullname']);
+                    }else{
+                      $message_name = '<b class="text-danger text-center">Please type correct name</b>';
+                    }
+
+                }else{
+                    $message_name = '<b class="text-danger text-center">Please fill the name field</b>';
+                }
+
+                //Selection Condition 
+                if(isset($_POST["categorie_op"]) && !empty($_POST["categorie_op"])){
+
+                        $categorie_option = $_POST["categorie_op"];
+                } else {
+                    $categorie_error = '<b class="text-danger text-center">Please select categorie option OR Insert course categorie.</b>';
+                }
+
+                // Description Condition
+                if( isset($_POST['description']) && !empty($_POST['description']) ){
+                	
+                		$description = mysqli_real_escape_string($connection,$_POST['description']);
+                	
+
+                }else{
+                	$message_des = '<b class="text-danger text-center">Please fill the Description field.</b>';
+                }   
+
+                // PDF File Condition  
+
+                if ( isset($_FILES["file1"]["name"]) && !empty($_FILES["file1"]["name"] ) )  {
+
+                    $allowedExts = array("pdf");
+                    $temp = explode(".", $_FILES["file1"]["name"]);
+                    $extension = end($temp);
+                    if (($_FILES["file1"]["type"] == "application/pdf") && in_array($extension, $allowedExts))
+                    {
+                        if ($_FILES["file1"]["error"] > 0)
+                        {
+                            $file_error = "Return Code: " . $_FILES["file1"]["error"];
+                        }else{
+
+                            $target_dir = "books/";    
+                            $fileName = $_FILES["file1"]["name"]; // the name of file
+                            $fileTmpLoc = $_FILES["file1"]["tmp_name"]; // file name in PHP folder
+                            $fileType = $_FILES["file1"]["type"];
+                            $fileSize =$_FILES["file1"]["size"]; // file size in bytes 
+                            // *******************New Code Start from here
+
+                            $temp = explode(".", $_FILES["file1"]["name"]);
+                             $newfilename = mysqli_real_escape_string($connection,round(microtime(true)) . '.' . end($temp));
+                            if (move_uploaded_file($_FILES["file1"]["tmp_name"], $target_dir . $newfilename)) {
+                            
+                            } else {
+                                $file_error =  '<b class="text-danger">Sorry, there was an error uploading your file';
+                            }
+                                //********************End code
+                        } 
+                    }else{
+                        $file_error = '<b class="text-danger">File is not PDF.</b>';   
+                    }
+                }
+                else{
+                    $file_error = '<b class="text-danger">Please insert File.</b>';
+                } 
+
+
+                // Cover Photo
+                if( isset($_FILES["profilePic"]["name"]) && !empty($_FILES["profilePic"]["name"]) ){
+                    $target_dir = "images/library/";
+
+                    $target_file = $target_dir . basename($_FILES["profilePic"]["name"]);
+                    $uploadOk = 1;
+                    $imageFileType = pathinfo($target_file,PATHINFO_EXTENSION);
+
+                    // Check if image file is a actual image or fake image
+                    $check = getimagesize($_FILES["profilePic"]["tmp_name"]);
+                    if($check !== false) {
+                        
+                        $uploadOk = 1;
+                    } else {
+                        $message_picture  = '<b class="text-danger">File is not an image</b>';
+                        $uploadOk = 0;
+                    }
+                
+                    // Check file size
+                    if ($_FILES["profilePic"]["size"] > 50000000) {
+                        $message_picture =  '<b class="text-danger">Sorry, your file is too large.</b>';
+                        $uploadOk = 0;
+                    }
+                    
+                    // Allow certain file formats
+                    if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg"
+                    && $imageFileType != "gif" ) {
+                        $message_picture =  '<b class="text-danger">Sorry, only JPG, JPEG, PNG & GIF files are allowed</b>';
+                        $uploadOk = 0;
+                    }
+                    
+                    // Check if $uploadOk is set to 0 by an error
+                    if ($uploadOk != 0) {
+                        $temp = explode(".", $_FILES["profilePic"]["name"]);
+                        $newfilename1 = mysqli_real_escape_string($connection,round(microtime(true)) . '.' . end($temp));
+                        if (move_uploaded_file($_FILES["profilePic"]["tmp_name"], $target_dir . $newfilename1)) {
+                            
+                        } else {
+                            $message_picture =  '<b class="text-danger">Sorry, there was an error uploading your file';
+                        }
+                    }
+                }else{
+                    $message_picture =  '<b class="text-danger">Please Select Your Profile picture</b>';
+                } 
+
+
+
+                if( ( isset($name) && !empty($name) )  && ( isset($newfilename) && !empty($newfilename) ) && (isset($categorie_option) && !empty($categorie_option)) && ( isset($description) && !empty($description) ) && ( isset($newfilename1) && !empty($newfilename1) ) ){
+
+                    $insert_query = "INSERT INTO `library` (name, categorieId, description, book, image) VALUES ('$name', $categorie_option, '$description','$newfilename','$newfilename1')";
+
+                    if(mysqli_query($connection, $insert_query)){                        
+                       
+                        header('Location: library.php#end');
+                    }else{
+                        $submit_message = '<div class="alert alert-danger">
+                            <strong>Warning!</strong>
+                            You are not able to submit please try later
+                        </div>';
+                    }    
+                }else{
+                    $submit_message = '<div class="alert alert-danger">
+                                    <strong>Warning!</strong>
+                                    You are not able to submit please try later
+                                </div>';
+                }
+            }else{
+    
+                 $alertMessage = "<div class='alert alert-danger'> 
+                    <p>You are not a Sophisticated Admin. So, You cannot right to delete any Record <strong>THANK YOU.</strong> </p><br>       
+                    <a type='button' class='btn btn-default btn-sm' data-dismiss='alert'>Cancel</a> 
+                    </div>";    
+            } // *******************************
+
+        } }// end of submission 
+
+	
+       /* %%%%%%%%%%%%% END CODE SUBMIT %%%%%%%%%%%% */
+	
+
+    if(isset($_GET['sucess'])){
+        $alertMessage = "<div class='alert alert-success'> 
+        <p>Record Delted successfully.</p><br>       
+        <a type='button' class='btn btn-default btn-sm' data-dismiss='alert'>Cancel</a> 
+        </div>";
+    }
+
+    if(isset($_GET['delid'])){ 
+
+        $delBook = $_GET['delid'];
+
+        if($power == 'yes'){
+           
+                           
+            $alertMessage = "<div class='alert alert-danger'> 
+                <p>Are you sure want to delete this Record? No take baacks!</p><br>
+                    <form action='".htmlspecialchars($_SERVER['PHP_SELF'])."?id=$delBook' method='post'>
+                       <input type='submit' class='btn btn-danger btn-sm'
+                       name='confirm-delete' value='Yes' delete!>
+                       <a type='button' class='btn btn-default btn-sm' data-dismiss='alert'>Oops, no thanks!</a> 
+                        
+                    </form>        
+                </div>";
+        } else {
+            $alertMessage = "<div class='alert alert-danger'> 
+            <p>You are not a Sophisticated Admin. So, You cannot right to delete any Record <strong>THANK YOU.</strong> </p><br>       
+            <a type='button' class='btn btn-default btn-sm' data-dismiss='alert'>Cancel</a> 
+            </div>";
+        }
+    }
+
+
+    // return from update Update
+    if(isset($_GET['back'])){
+
+        $back = $_GET['back'];
+
+        if($back!=2){
+                $update_status = "<div class='alert alert-danger'> 
+        <p>You are not a Sophisticated Admin. You can update your own Record.<strong>THANK YOU.</strong> </p><br>       
+        <a type='button' class='btn btn-default btn-sm' data-dismiss='alert'>Cancel</a> 
+        </div>";
+        }else{
+
+            $update_status = "<div class='alert alert-success'> 
+        <p>Record Updated successfully.</p><br>       
+        <a type='button' class='btn btn-default btn-sm' data-dismiss='alert'>Cancel</a> 
+        </div>";
+        }
+
+    } 
+
+
+     // conform delete button
+    if(isset($_POST['confirm-delete'])){
+
+        $idBook = $_GET['id'];
+
+        // Delete file from folder
+        $query2 = "SELECT * FROM `library` WHERE id='$idBook' ";
+
+        $result2 = mysqli_query($connection, $query2);
+
+        if(mysqli_num_rows($result2) > 0){
+        
+                        //We have data 
+                        //output the data
+             while( $row2 = mysqli_fetch_assoc($result2) ){
+                    
+                    $base_directory = "images/library/";
+                    if(unlink($base_directory.$row2['image']))
+                        $delVar = " ";
+
+                    $base_directory = "books/";
+                    if(unlink($base_directory.$row2['book']))
+                        $delVar = " ";  
+             }
+        }
+ 
+        // new database query 
+        $query = "DELETE FROM `library` WHERE id='$idBook'";
+        $result = mysqli_query($connection,$query);
+        
+        if($result){
+            // redirect
+            header("Location: library.php?sucess=1");
+        } else {
+                     echo "Error".$query."<br>".mysqli_error($conn);
+        }
+    }
+
+
+    include('header.php');
+
+// *************Update
+include("../include/config.php");
+
+	if((!isset($_SESSION['userId']) && empty($_SESSION['userId'])) && (!isset($_SESSION['userName']) && empty($_SESSION['userName']))) {
+
+        header('Location: index.php');
+    } else {
+
+        $loginName = $_SESSION['userName'];
+        $loginId = $_SESSION['userId'];
+        $bookId = $_GET["id"];
+        $power = $_SESSION['adminType'];
+
+        /* %%%%%%%%%%%%% START CODE SUBMIT %%%%%%%%%%%% */
+
+        if( isset($_POST['submit']) ){
+
+            //Name Condition
+            if( isset($_POST['fullname']) && !empty($_POST['fullname'])){
+        
+                if(preg_match('/^[A-Za-z\s]+$/',$_POST['fullname'])){
+                  $name = mysqli_real_escape_string($connection,$_POST['fullname']);
+                }else{
+                  $message_name = '<b class="text-danger text-center">Please type correct name</b>';
+                }
+
+            }else{
+                $message_name = '<b class="text-danger text-center">Please fill the name field</b>';
+            }
+
+            //Categorie Condition
+            if(isset($_POST["categorie_op"]) && !empty($_POST["categorie_op"])){
+
+                    $categorie_option = $_POST["categorie_op"];
+            } else {
+                $categorie_error = '<b class="text-danger text-center">Please select categorie option OR Insert course categorie.</b>';
+            }
+
+            // Description Condition 
+            if( isset($_POST['description']) && !empty($_POST['description']) ){
+            	
+            	if(preg_match('/^[A-Za-z.\s]+$/',$_POST['description'])){
+            		$description = mysqli_real_escape_string($connection,$_POST['description']);
+            	}else{
+
+            		$message_des = '<b class="text-danger text-center">Please enter valid Description field.</b>';
+            	}
+
+            }else{
+            	$message_des = '<b class="text-danger text-center">Please fill the Description field.</b>';
+            }    
+
+            if (isset($_FILES["file1"]["name"]) && !empty($_FILES["file1"]["name"] ) )  {
+
+                $allowedExts = array("pdf");
+                $temp = explode(".", $_FILES["file1"]["name"]);
+                $extension = end($temp);
+                
+                if (($_FILES["file1"]["type"] == "application/pdf") && in_array($extension, $allowedExts))
+                {
+                    if ($_FILES["file1"]["error"] > 0)
+                    {
+                        $file_error = "Return Code: " . $_FILES["file1"]["error"];
+                    }else{
+
+                        $target_dir = "books/"; 
+                        $delfile = 'yes';
+
+                        $fileName = $_FILES["file1"]["name"]; // the name of file
+                        $fileTmpLoc = $_FILES["file1"]["tmp_name"]; // file name in PHP folder
+                        $fileType = $_FILES["file1"]["type"];
+                        $fileSize =$_FILES["file1"]["size"]; // file size in bytes 
+                        // *******************New Code Start from here
+
+                        $temp = explode(".", $_FILES["file1"]["name"]);
+                         $newfilename = mysqli_real_escape_string($connection,round(microtime(true)) . '.' . end($temp));
+                        if (move_uploaded_file($_FILES["file1"]["tmp_name"], $target_dir . $newfilename)) {
+                        
+                        } else {
+                            $file_error =  '<b class="text-danger">Sorry, there was an error uploading your file.';
+                        }
+
+                        //********************End code
+                    } 
+                }else{
+                    $file_error = '<b class="text-danger">File is not PDF.</b>';   
+                }   
+            }else{
+                $newfilename = $_POST['pdfValue'];
+                $delfile = 'no';
+
+            } // end else 
+
+
+            // Cover Photo'''''''''''''
+
+            if( isset($_FILES["profilePic"]["name"]) && !empty($_FILES["profilePic"]["name"]) ){
+                $target_dir = "images/library/";
+                $del = 'yes';
+                $target_file = $target_dir . basename($_FILES["profilePic"]["name"]);
+                $uploadOk = 1;
+                $imageFileType = pathinfo($target_file,PATHINFO_EXTENSION);
+
+                // Check if image file is a actual image or fake image
+                $check = getimagesize($_FILES["profilePic"]["tmp_name"]);
+                if($check !== false) {
+                    
+                    $uploadOk = 1;
+                } else {
+                    $message_picture  = '<b class="text-danger">File is not an image</b>';
+                    $uploadOk = 0;
+                }
+            
+                // Check file size
+                if ($_FILES["profilePic"]["size"] > 5000000) {
+                    $message_picture =  '<b class="text-danger">Sorry, your file is too large.</b>';
+                    $uploadOk = 0;
+                }
+                
+                // Allow certain file formats
+                if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg"
+                && $imageFileType != "gif" ) {
+                    $message_picture =  '<b class="text-danger">Sorry, only JPG, JPEG, PNG & GIF files are allowed</b>';
+                    $uploadOk = 0;
+                }
+                
+                // Check if $uploadOk is set to 0 by an error
+                if ($uploadOk != 0) {
+                    $temp = explode(".", $_FILES["profilePic"]["name"]);
+                    $newfilename1 = mysqli_real_escape_string($connection,round(microtime(true)) . '.' . end($temp));
+                    if (move_uploaded_file($_FILES["profilePic"]["tmp_name"], $target_dir . $newfilename1)) {
+                        
+                    } else {
+                        $message_picture =  '<b class="text-danger">Sorry, there was an error uploading your file';
+                    }
+                }
+
+            }else{
+                $newfilename1 =  $_POST['picValue'];
+                $del = 'no';
+            } 
+
+
+            if( ( isset($name) && !empty($name) )  && ( isset($newfilename) && !empty($newfilename) ) && (isset($categorie_option) && !empty($categorie_option)) && ( isset($description) && !empty($description) ) && ( isset($newfilename1) && !empty($newfilename1) ) ){
+
+                    $insert_query = "UPDATE `library` SET
+                    name = '$name', 
+                    categorieId = '$categorie_option',  
+                    description = '$description', 
+                    book = '$newfilename',
+                    image = '$newfilename1' 
+                    WHERE id = '$bookId' ";
+
+                    if(mysqli_query($connection, $insert_query)){
+                        
+                        if($del == 'yes'){
+                        $base_directory = "images/library/";
+                        if(unlink($base_directory.$_POST['picValue']))
+                        $delVar = " ";
+                    }
+
+                    if($delfile == 'yes'){
+                        $base_directory = "books/";
+                        if(unlink($base_directory.$_POST['pdfValue']))
+                        $delVar = " ";
+                    }
+                       
+                        header('Location: library.php?back=2');
+                    }else{
+                        $submit_message = '<div class="alert alert-danger">
+                            <strong>Warning!</strong>
+                            You are not able to submit please try later
+                        </div>';
+                    }
+        
+
+        }else{
+            $submit_message = '<div class="alert alert-danger">
+                            <strong>Warning!</strong>
+                            You are not able to submit please try later
+                        </div>';
+        }
+
+
+} // end of submission 
+
+	   /* %%%%%%%%%%%%% END CODE SUBMIT %%%%%%%%%%%% */
+
+
+if(isset($_GET['id'])){
+
+        $bookId = $_GET["id"];
+
+        if( $power == 'yes') {
+
+           $query = "SELECT * FROM `library` WHERE id='$bookId' ";
+
+            $result = mysqli_query($connection,$query);
+
+            if(mysqli_num_rows($result) > 0){
+                  while( $row = mysqli_fetch_assoc($result) ){
+
+                $bookName = $row["name"];
+                $bookDescription = $row["description"];
+                $bookCategorie = $row["categorieId"];
+                $bookPdf = $row["book"];
+                $coverPic = $row["image"];
+            
+             }
+            }
+        }else header('Location: library.php?back=1');    
+
+    } else header('Location: library.php?back=1');
+
+
+    
+include('header.php');
+	
 ?>
 
 		<!-- Document Wrapper

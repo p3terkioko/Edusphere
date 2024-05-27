@@ -62,4 +62,117 @@
 
 			</form>
 
-// Watch Code from Video
+            //**************** Library User File
+<?php
+
+	if(!empty($newOp) && $newOp != 'a'){ ?>
+
+	<table class="table table-striped table-bordered">
+    <tr>
+        <th>Cover</th>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Download</th>
+    </tr>
+    <?php
+
+        $query = "SELECT * FROM `library` WHERE categorieId='$newOp'";
+
+        $result = mysqli_query($connection, $query);
+
+        if(mysqli_num_rows($result) > 0){
+        
+                        //We have data 
+                        //output the data
+         while( $row = mysqli_fetch_assoc($result) ){
+                echo "<tr>";
+                
+
+                echo "<td width='100px' height='100px'><img src=gotoep/images/library/".$row["image"]." width='100px' height='100px'>
+                </td>";
+                
+                echo "<td><strong>".$row["name"]."</strong></td>";
+
+                echo "<td>".$row["description"]."</td>";
+
+                echo '<td width="50px"><a target="_blank" href="gotoep/books/'.$row['book']. '" type= "button" class="btn btn-primary btn-sm">
+                <span class="icon-download-alt"></span></a></td>';             
+
+
+                echo "<tr>";  
+            }
+    } else {
+        echo "<div class='alert alert-danger'>Books Are Not Available Yet...!<a class='close' data-dismiss='alert'>&times</a></div>";
+    }
+    
+    // close the mysql 
+        mysqli_close($connection);
+    ?>
+
+    <tr>
+        <td colspan="5" id="end"><div class="text-center"><a href="library.php#start" type="button" class="btn btn-sm btn-success"><span class="icon-arrow-up"></span></a></div></td>
+    </tr>
+</table>
+		
+<?php	}else{
+
+?>
+
+
+<table class="table table-striped table-bordered">
+    <tr>
+        <th>Cover</th>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Download</th>
+    </tr>
+    <?php
+
+        $query = "SELECT * FROM `library`";
+
+        $result = mysqli_query($connection, $query);
+
+        if(mysqli_num_rows($result) > 0){
+        
+                        //We have data 
+                        //output the data
+         while( $row = mysqli_fetch_assoc($result) ){
+                echo "<tr>";
+
+
+                echo "<td width='100px' height='100px'><img src=gotoep/images/library/".$row["image"]." width='100px' height='100px'>
+                </td>";
+                
+                echo "<td><strong>".$row["name"]."</strong></td>";
+
+                echo "<td>".$row["description"]."</td>";
+
+                echo '<td width="50px"><a target="_blank" href="gotoep/books/'.$row['book']. '" type= "button" class="btn btn-primary btn-sm">
+                <span class="icon-download-alt"></span></a></td>';             
+
+
+                echo "<tr>";  
+            }
+    } else {
+        echo "<div class='alert alert-danger'>Books Are Not Available Yet...!<a class='close' data-dismiss='alert'>&times</a></div>";
+    }
+    
+    // close the mysql 
+        mysqli_close($connection);
+    ?>
+
+    <tr>
+        <td colspan="5" id="end"><div class="text-center"><a href="library.php#start" type="button" class="btn btn-sm btn-success"><span class="icon-arrow-up"></span></a></div></td>
+    </tr>
+</table>
+
+<?php } ?>					
+					
+</div>	
+</div>
+</div>
+</section>
+
+
+<?php include("footer.php"); ?>
+	
