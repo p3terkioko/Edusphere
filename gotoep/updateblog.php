@@ -1,8 +1,170 @@
 
 <?php
 
-    // Watch Code from Update
-?>
+include("../include/config.php");
+
+	if((!isset($_SESSION['userId']) && empty($_SESSION['userId'])) && (!isset($_SESSION['userName']) && empty($_SESSION['userName']))) {
+
+        header('Location: index.php');
+    } else {
+
+        $loginName = $_SESSION['userName'];
+        $loginId = $_SESSION['userId'];
+        $postId = $_GET["id"];
+        $power = $_SESSION['adminType'];
+
+        /* %%%%%%%%%%%%% START CODE SUBMIT %%%%%%%%%%%% */
+
+          if( isset($_POST['submit']) ){
+
+            $adminPost = $_POST['adminPost'];
+
+            //Title Condition
+            if( isset($_POST['title']) && !empty($_POST['title'])){
+        
+                  $title = mysqli_real_escape_string($connection,$_POST['title']);
+               
+            }else{
+                  $message_title = '<b class="text-danger text-center">Please fill the name field</b>';
+            }
+
+            // Selection Condition
+            if(isset($_POST["contentsel"]) && !empty($_POST["contentsel"])){
+
+                    $option = $_POST["contentsel"];
+            } else {
+                $option = $_POST['valueHide1'];
+            }
+
+            // Content Condition
+            if( isset($_POST['content']) && !empty($_POST['content']) ){
+                
+                if(preg_match('/^[A-Za-z.\s]+$/',$_POST['content'])){
+                    $content = mysqli_real_escape_string($connection,$_POST['content']);
+                }else{
+
+                    $message_con = '<b class="text-danger text-center">Please enter valid post content field.</b>';
+                }
+
+            }else{
+                $message_con = '<b class="text-danger text-center">Please fill the Post content field.</b>';
+            } // end of description
+
+            if( (isset($_FILES["profilePic"]["name"]) && !empty($_FILES["profilePic"]["name"])) || (isset($_POST["link"]) && !empty($_POST["link"]))){
+
+                if(isset($_FILES["profilePic"]["name"]) && !empty($_FILES["profilePic"]["name"])){
+
+                    $target_dir = "images/blog/";
+                    $del = 'yes';
+
+                    $target_file = $target_dir . basename($_FILES["profilePic"]["name"]);
+                    $uploadOk = 1;
+                    $imageFileType = pathinfo($target_file,PATHINFO_EXTENSION);
+
+                    // Check if image file is a actual image or fake image
+                    $check = getimagesize($_FILES["profilePic"]["tmp_name"]);
+                    if($check !== false) {
+                        
+                        $uploadOk = 1;
+                    } else {
+                        $message_picture  = '<b class="text-danger">File is not an image</b>';
+                        $uploadOk = 0;
+                    }
+            
+                    // Check file size
+                    if ($_FILES["profilePic"]["size"] > 5000000) {
+                        $message_picture =  '<b class="text-danger">Sorry, your file is too large.</b>';
+                        $uploadOk = 0;
+                    }
+            
+                    // Allow certain file formats
+                    if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg"
+                    && $imageFileType != "gif" ) {
+                        $message_picture =  '<b class="text-danger">Sorry, only JPG, JPEG, PNG & GIF files are allowed</b>';
+                        $uploadOk = 0;
+                    }
+
+                    // Check if $uploadOk is set to 0 by an error
+                    if ($uploadOk != 0) {
+                        $temp = explode(".", $_FILES["profilePic"]["name"]);
+                        $newfilename = mysqli_real_escape_string($connection,round(microtime(true)) . '.' . end($temp));
+                        if (move_uploaded_file($_FILES["profilePic"]["tmp_name"], $target_dir . $newfilename)) {
+                            
+                        } else {
+                            $message_picture =  '<b class="text-danger">Sorry, there was an error uploading your file';
+                        }
+                    }
+
+                } else { // if picture not inserted
+
+                    $newfilename = $_POST["link"];
+                }
+
+            }else{ // main IF bothe not inserted 
+                $newfilename =  $_POST['valueHide'];
+                $del = 'no';
+            }
+
+            $postDate = date("F d, Y");
+
+            if( ( isset($title) && !empty($title) ) && ( isset($newfilename) && !empty($newfilename) ) ){
+
+                $insert_query = "UPDATE `blog` SET 
+                postContent = '$content', 
+                postDate = '$postDate', 
+                admin = '$adminPost', 
+                title = '$title', 
+                status = '$option', 
+                post = '$newfilename'
+                WHERE id ='$postId' " ;
+
+                if(mysqli_query($connection, $insert_query)){
+                   
+                    if($option == 'image'){    
+                       if($del == 'yes'){
+                             $base_directory = "images/blog/";
+                            if(unlink($base_directory.$_POST['valueHide']))
+                            $delVar = " ";
+                        }
+                    }    
+                    header('Location: blog.php?back=2');
+                }else{
+                    $submit_message = '<div class="alert alert-danger">
+                        <strong>Warning!</strong>
+                        You are not able to submit please try later
+                    </div>';
+                }
+            } // end of if 
+    }//submit button
+
+	   /* %%%%%%%%%%%%% END CODE SUBMIT %%%%%%%%%%%% */
+
+    if(isset($_GET['id'])){
+
+        $postId = $_GET["id"];
+        $postAdmin = $_GET["admin"];
+
+        if( $power == 'yes' || $loginId == $postAdmin) {
+
+           $query = "SELECT * FROM `blog` WHERE id='$postId' ";
+
+            $result = mysqli_query($connection,$query);
+
+                if(mysqli_num_rows($result) > 0){
+                      while( $row = mysqli_fetch_assoc($result) ){
+
+                    $adminPost = $row['admin']; 
+                    $status =  $row["status"];
+                    $post = $row["post"];
+                    $title = $row["title"]; 
+                    $content = $row["postContent"];                            
+                 }
+            }
+        }else header('Location: blog.php?back=1');    
+
+    } else header('Location: blog.php?back=1');
+
+    include('header.php');?>
 
 		<!-- ========================= Document Wrapper ==================== -->
 	<div id="wrapper" class="clearfix">
