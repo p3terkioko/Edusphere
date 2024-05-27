@@ -1,7 +1,145 @@
 
 <?php
 
-    // Watch Code From Video
+include("../include/config.php");
+
+if((!isset($_SESSION['userId']) && empty($_SESSION['userId'])) && (!isset($_SESSION['userName']) && empty($_SESSION['userName']))) {
+
+	header('Location: index.php');
+} else {
+
+	$memberId = $_GET['id'];
+	$loginName = $_SESSION['userName'];
+	$loginId = $_SESSION['userId'];
+	$power = $_SESSION['adminType'];
+
+	/* %%%%%%%%%%%%% START CODE SUBMIT %%%%%%%%%%%% */
+
+	if( isset($_POST['submit']) ){
+
+		//Name Condition
+	   if( isset($_POST['fullname']) && !empty($_POST['fullname'])){
+	
+			if(preg_match('/^[A-Za-z\s]+$/',$_POST['fullname'])){
+			  $name = mysqli_real_escape_string($connection,$_POST['fullname']);
+			}else{
+			  $message_name = '<b class="text-danger text-center">Please enter correct Name.</b>';
+			}
+
+		}else{
+			$message_name = '<b class="text-danger text-center">Please fill the Name field.</b>';
+		}
+
+
+		if( isset($_POST['qualification']) && !empty($_POST['qualification'])){
+			
+			if(preg_match('/^[A-Za-z\s]+$/',$_POST['qualification'])){
+				$qualification = mysqli_real_escape_string($connection,$_POST['qualification']);
+			}else{
+
+				$message_q = '<b class="text-danger text-center">Please enter valid Qualifications field.</b>';
+			}
+
+		}else{
+			$message_q = '<b class="text-danger text-center">Please fill the Qualifications field.</b>';
+		}
+
+
+		if( isset($_FILES["profilePic"]["name"]) && !empty($_FILES["profilePic"]["name"]) ){
+			$target_dir = "images/team/";
+			$del = 'yes';
+			$target_file = $target_dir . basename($_FILES["profilePic"]["name"]);
+			$uploadOk = 1;
+			$imageFileType = pathinfo($target_file,PATHINFO_EXTENSION);
+
+			// Check if image file is a actual image or fake image
+			$check = getimagesize($_FILES["profilePic"]["tmp_name"]);
+			if($check !== false) {                
+				$uploadOk = 1;
+			} else {
+				$message_picture  = '<b class="text-danger">File is not an image</b>';
+				$uploadOk = 0;
+			}
+
+			// Check file size
+			if ($_FILES["profilePic"]["size"] > 5000000) {
+				$message_picture =  '<b class="text-danger">Sorry, your file is too large.</b>';
+				$uploadOk = 0;
+			}
+		
+			// Allow certain file formats
+			if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg"
+			&& $imageFileType != "gif" ) {
+				$message_picture =  '<b class="text-danger">Sorry, only JPG, JPEG, PNG & GIF files are allowed</b>';
+				$uploadOk = 0;
+			}
+		
+			// Check if $uploadOk is set to 0 by an error
+			if ($uploadOk != 0) {
+				$temp = explode(".", $_FILES["profilePic"]["name"]);
+				$newfilename = mysqli_real_escape_string($connection,round(microtime(true)) . '.' . end($temp));
+				if (move_uploaded_file($_FILES["profilePic"]["tmp_name"], $target_dir . $newfilename)) {
+					
+				} else {
+					$message_picture =  '<b class="text-danger">Sorry, there was an error uploading your file';
+				}
+			}
+
+		}else{
+			$newfilename =  $_POST['picValue'];
+			$del = 'no';
+		}
+
+		if( ( isset($name) && !empty($name) )  && ( isset($newfilename) && !empty($newfilename) ) && ( isset($qualification) && !empty($qualification) )  ){
+
+				$insert_query = "UPDATE `team` set
+				 name ='$name',  
+				 image = '$newfilename', 
+				 qualification = '$qualification' 
+				 WHERE id = '$memberId'";
+
+				if(mysqli_query($connection, $insert_query)){
+					
+					if($del == 'yes'){
+					$base_directory = "images/team/";
+					if(unlink($base_directory.$_POST['picValue']))
+					$delVar = " ";
+				}
+				   
+					header('Location: team.php?back=2');
+				}else{
+					$submit_message = '<div class="alert alert-danger">
+						<strong>Warning!</strong>
+						You are not able to submit please try later
+					</div>';
+				}
+			} // end of if 
+		}//submit button
+
+
+if(isset($_GET['id'])){
+
+	$memberId = $_GET['id'];
+	if( $power == 'yes' ) {
+
+	   $query = "SELECT * FROM `team` WHERE id=$memberId ";
+
+		$result = mysqli_query($connection,$query);
+
+		if(mysqli_num_rows($result) > 0){
+			while( $row = mysqli_fetch_assoc($result) ){
+				$memberPic = $row["image"];
+				$memberName = $row["name"];
+				$memberQualification = $row["qualification"];
+			}
+		}
+	}else header('Location: team.php?back=1');    
+
+} else header('Location: team.php?back=1');
+
+
+
+include('header.php');
 
 ?>
 
