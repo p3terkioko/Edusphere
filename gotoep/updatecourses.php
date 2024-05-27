@@ -1,7 +1,184 @@
 
 <?php
 
-    // Watch Code From Video
+include("../include/config.php");
+
+if((!isset($_SESSION['userId']) && empty($_SESSION['userId'])) && (!isset($_SESSION['userName']) && empty($_SESSION['userName']))) {
+
+    header('Location: index.php');
+} else{
+
+    $courseId1 = $_GET["id"];
+    $loginName = $_SESSION['userName'];
+    $loginId = $_SESSION['userId'];
+    $power = $_SESSION['adminType'];
+
+    /* %%%%%%%%%%%%% START CODE SUBMIT %%%%%%%%%%%% */
+
+      if( isset($_POST['submit']) ){
+
+        // Description Condition
+        if( isset($_POST['description']) && !empty($_POST['description']) ){
+            
+           
+                $description = mysqli_real_escape_string($connection,$_POST['description']);
+           
+        }else{
+            $message_des = '<b class="text-danger text-center">Please fill the Description field.</b>';
+        } 
+
+        // Categorie Condition
+        if(isset($_POST["categorie_op"]) && !empty($_POST["categorie_op"])){
+
+            $categorie_option = $_POST["categorie_op"];
+        } else {
+            $categorie_error = '<b class="text-danger text-center">Please select categorie option OR insert course categorie.</b>';
+        }
+
+        // Selection Condition
+        if(isset($_POST["book_op"]) && !empty($_POST["book_op"])){
+
+                $book_option = $_POST["book_op"];
+        } else {
+            $book_error = '<b class="text-danger text-center">Please Select book option OR Insert Book.</b>';
+        }
+
+        //Instructor Condition
+        if(isset($_POST["ins_op"]) && !empty($_POST["ins_op"])){
+
+                $instructor_option = $_POST["ins_op"];
+        } else {
+            $instructor_error = '<b class="text-danger text-center">Please select Instructor option OR insert Instructor information.</b>';
+        }
+
+        //Name Condition
+        if( isset($_POST['fullname']) && !empty($_POST['fullname'])){
+            
+            if(preg_match('/^[A-Za-z\s]+$/',$_POST['fullname'])){
+              $name = mysqli_real_escape_string($connection,$_POST['fullname']);
+            }else{
+              $message_name = '<b class="text-danger text-center">Please type correct name</b>';
+            }
+
+          }else{
+              $message_name = '<b class="text-danger text-center">Please fill the name field</b>';
+        }
+
+        // Image Condition
+        if( isset($_FILES["profilePic"]["name"]) && !empty($_FILES["profilePic"]["name"]) ){
+            $target_dir = "images/courses/";
+            $del = 'yes';
+            $target_file = $target_dir . basename($_FILES["profilePic"]["name"]);
+            $uploadOk = 1;
+            $imageFileType = pathinfo($target_file,PATHINFO_EXTENSION);
+            
+            // Check if image file is a actual image or fake image
+            $check = getimagesize($_FILES["profilePic"]["tmp_name"]);
+            if($check !== false) {
+                
+                $uploadOk = 1;
+            } else {
+                $message_picture  = '<b class="text-danger">File is not an image</b>';
+                $uploadOk = 0;
+            }
+            
+            // Check file size
+            if ($_FILES["profilePic"]["size"] > 5000000) {
+                $message_picture =  '<b class="text-danger">Sorry, your file is too large.</b>';
+                $uploadOk = 0;
+            }
+        
+            // Allow certain file formats
+            if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg"
+            && $imageFileType != "gif" ) {
+                $message_picture =  '<b class="text-danger">Sorry, only JPG, JPEG, PNG & GIF files are allowed</b>';
+                $uploadOk = 0;
+            }
+        
+            // Check if $uploadOk is set to 0 by an error
+            if ($uploadOk != 0) {
+                $temp = explode(".", $_FILES["profilePic"]["name"]);
+                $newfilename = mysqli_real_escape_string($connection,round(microtime(true)) . '.' . end($temp));
+                if (move_uploaded_file($_FILES["profilePic"]["tmp_name"], $target_dir . $newfilename)) {
+                    
+                } else {
+                    $message_picture =  '<b class="text-danger">Sorry, there was an error uploading your file';
+                }
+            }
+
+        }else{
+            $newfilename = $_POST["picValue"];
+            $del = 'no';
+        }
+
+
+
+        if( ( isset($name) && !empty($name) ) && (isset($book_option) && !empty($book_option)) && (isset($instructor_option) && !empty($instructor_option)) && (isset($categorie_option) && !empty($categorie_option)) && (isset($description) && !empty($description)) && ( isset($newfilename) && !empty($newfilename) ) ){
+
+
+                $insert_query = "UPDATE `course` SET
+                name = '$name', 
+                cover = '$newfilename',
+                description = '$description',
+                categorieId = '$categorie_option', 
+                instructorId = '$instructor_option',
+                bookId = '$book_option'
+                WHERE id = '$courseId1' ";
+
+
+                if(mysqli_query($connection, $insert_query)){
+                    
+                    if($del == 'yes'){
+                    $base_directory = "images/courses/";
+                    if(unlink($base_directory.$_POST['picValue']))
+                    $delVar = " ";
+                }
+
+                   
+                    header('Location: courses.php?back=2');
+                }else{
+                    $submit_message = '<div class="alert alert-danger">
+                        <strong>Warning!</strong>
+                        You are not able to submit please try later
+                    </div>';
+                }        
+            }
+        } // end of if 
+
+
+   /* %%%%%%%%%%%%% END CODE SUBMIT %%%%%%%%%%%% */
+
+
+
+if(isset($_GET['id'])){
+
+    $courseId1 = $_GET["id"];
+
+    if( $power == 'yes') {
+
+       $query = "SELECT * FROM `course` WHERE id='$courseId1' ";
+
+        $result = mysqli_query($connection,$query);
+
+        if(mysqli_num_rows($result) > 0){
+              while( $row = mysqli_fetch_assoc($result) ){
+
+            $coursePic = $row["cover"];
+            $coursename = $row["name"];
+            $courseDescription = $row["description"];
+            $courseInstr = $row['instructorId'];
+            $coueseCategorie = $row['categorieId'];
+            $coursBook = $row['bookId'];
+        
+         }
+        }
+    }else header('Location: courses.php?back=1');    
+
+} else header('Location: courses.php?back=1');
+
+
+include('header.php');
+
 ?>
 
 		<!-- Document Wrapper
