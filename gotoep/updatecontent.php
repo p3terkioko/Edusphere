@@ -1,8 +1,102 @@
 
 <?php
 
-    // Watch Code From Video
+include("../include/config.php");
 
+	if((!isset($_SESSION['userId']) && empty($_SESSION['userId'])) && (!isset($_SESSION['userName']) && empty($_SESSION['userName']))) {
+
+        header('Location: index.php');
+    } else {
+
+        $loginName = $_SESSION['userName'];
+        $loginId = $_SESSION['userId'];
+        $updateId = $_GET['id'];
+        $power = $_SESSION['adminType'];
+
+        /* %%%%%%%%%%%%% START CODE SUBMIT %%%%%%%%%%%% */
+
+        if( isset($_POST['submit']) ){
+  
+                if(isset($_POST["course_op"]) && !empty($_POST["course_op"])){
+
+                    $course_option = $_POST["course_op"];
+                } else {
+                    $course_error = '<b class="text-danger text-center">Please select course option OR insert course. .</b>';
+                }
+            
+                // Description
+                if( isset($_POST['editor']) && !empty($_POST['editor']) ){
+                        
+                        $lectureContent = $_POST['editor'];
+                }else{
+                    	$message_Content = '<b class="text-danger text-center">Please fill the content field.</b>';
+                }     
+
+                // Name
+                if( isset($_POST['name']) && !empty($_POST['name'])){
+                    	
+                	if(preg_match('/^[A-Za-z\s]+$/',$_POST['name'])){
+                    		$name = mysqli_real_escape_string($connection,$_POST['name']);
+                    	}else{
+
+                    		$message_name = '<b class="text-danger text-center">Please enter valid Name field.</b>';
+                    	}
+
+                }else{
+                    $message_name = '<b class="text-danger text-center">Please fill the Name field.</b>';
+                }
+
+
+                if( ( isset($name) && !empty($name) ) && ( isset($course_option) && !empty($course_option) ) && ( isset($lectureContent) && !empty($lectureContent) ) ) {
+
+                    $insert_query = "UPDATE `content` SET
+                    content = '$lectureContent', 
+                    courseId = '$course_option', 
+                    lectureName = '$name'
+                    WHERE id= '$updateId' ";
+
+                    if(mysqli_query($connection, $insert_query)){
+                                               
+                        header('Location: content.php?back=2');
+                    }else{
+                        $submit_message = '<div class="alert alert-danger">
+                            <strong>Warning!</strong>
+                            You are not able to submit please try later
+                        </div>';
+                    }
+                } // end of if 
+            }//submit button */
+
+	   /* %%%%%%%%%%%%% END CODE SUBMIT %%%%%%%%%%%% */
+	
+    $alertMessage = " ";
+
+    // Get Data
+
+    if(isset($_GET['id'])){
+
+        $updateId = $_GET['id'];
+        if( $power == 'yes' ) {
+
+           $query = "SELECT * FROM `content` WHERE id=$updateId ";
+
+            $result = mysqli_query($connection,$query);
+
+            if(mysqli_num_rows($result) > 0){
+                  while( $row = mysqli_fetch_assoc($result) ){
+
+                $content_Name = $row["lectureName"];
+                $contentFull = $row["content"];
+                $course_Id = $row["courseId"];
+               
+             }
+            }
+        }else header('Location: content.php?back=1');    
+
+    } else header('Location: content.php?back=1');
+
+    include('header.php');
+	
 ?>
 
 		<!-- ============================== Document Wrapper ================================= -->
