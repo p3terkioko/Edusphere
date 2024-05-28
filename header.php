@@ -83,7 +83,7 @@
 
 							<li class="mega-menu"><a href="index.php?page=blog"><div>Blog</div></a> </li>
 
-							<li><a href="index.php?page=team"><div>Team</div></a>
+							<!-- <li><a href="index.php?page=team"><div>Team</div></a>
 
 										<ul>
 
@@ -92,7 +92,7 @@
 										
 										</ul>
 
-							</li>
+							</li> -->
 
 							
 							<li><a href="index.php?page=library"><div>Library</div></a></li>

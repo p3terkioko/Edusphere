@@ -62,7 +62,6 @@
 
 			</form>
 
-            //**************** Library User File
 <?php
 
 	if(!empty($newOp) && $newOp != 'a'){ ?>
