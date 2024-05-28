@@ -1,7 +1,6 @@
 
 <?php
 
-    //**************** Categories File
 include("../include/config.php");
 
 if((!isset($_SESSION['userId']) && empty($_SESSION['userId'])) && (!isset($_SESSION['userName']) && empty($_SESSION['userName']))) {
@@ -45,7 +44,7 @@ if((!isset($_SESSION['userId']) && empty($_SESSION['userId'])) && (!isset($_SESS
                 }else{
                     $submit_message = '<div class="alert alert-danger">
                         <strong>Warning!</strong>
-                        You are not able to submit please try later
+                        You are not able to submit please try again later
                     </div>';
                 }
             }

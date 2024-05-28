@@ -1,6 +1,5 @@
 <?php
 
-    // Watch from YouTube Video
 
 ?>
 
@@ -231,7 +230,7 @@
 		</section><!-- #content end -->
 
 <?php include('footer.php'); 
-}
+
 
 ?>
 

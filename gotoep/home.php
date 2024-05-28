@@ -201,7 +201,7 @@ if(isset($_GET['delid'])){
         } else {
 
             $alertMessage = "<div class='alert alert-danger'> 
-            <p>Please Chaudhry cannot Delete yourself <strong>THANK YOU.</strong> </p><br>       
+            <p><strong>THANK YOU.</strong> </p><br>       
             <a type='button' class='btn btn-default btn-sm' data-dismiss='alert'>Cancel</a> 
             </div>";
         }        
