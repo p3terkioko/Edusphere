@@ -32,7 +32,62 @@ include("header.php"); ?>
 
  
 
-				// Watch Code From Video 1
+				<?php
+
+					if(isset($courseId)){
+						$query = "SELECT * FROM `course` WHERE id='$courseId'";
+
+        				$result = mysqli_query($connection, $query);
+
+       					if(mysqli_num_rows($result) > 0){
+        
+                        		//We have data 
+                        		//output the data
+         					while( $row = mysqli_fetch_assoc($result) ){
+
+         					 	$teacherId = $row['instructorId'];
+         					 	$courseName = $row['name'];
+         					 	$book =$row['bookId'];
+
+         					} 
+
+         				} else{
+         					echo '<script type="text/javascript">
+           						window.location = "course.php"
+      						</script>';
+         				}
+					}
+
+					if(isset($teacherId)){
+
+						$query = "SELECT * FROM `teacher` WHERE id='$teacherId'";
+
+        				$result = mysqli_query($connection, $query);
+
+       					if(mysqli_num_rows($result) > 0){
+        
+                        		//We have data 
+                        		//output the data
+         					while( $row = mysqli_fetch_assoc($result) ){
+
+         					 	$teacherName = $row['name'];
+         					 	$teacherMail = $row['mail'];
+         					 	$teacherPic = $row['image'];
+         					 	$teacherQ = $row['qualification'];
+         					 	$teacherDes = $row['description'];
+
+         					} 
+
+         				}else{
+         					echo '<script type="text/javascript">
+           						window.location = "course.php"
+      						</script>';
+         				}
+
+					}
+					
+
+				?>
 
 					<!-- Post Content
 					============================================= -->
@@ -96,7 +151,64 @@ include("header.php"); ?>
 					</div>
 				</div>
 
-			// Watch Video For Code 2
+				<?php
+
+if(isset($courseId)){
+
+	$query = "SELECT * FROM `content` WHERE courseId='$courseId'";
+
+	$result = mysqli_query($connection, $query);
+
+	   if(mysqli_num_rows($result) > 0){
+
+			//We have data 
+			//output the data
+		 while( $row = mysqli_fetch_assoc($result) ){
+
+		echo '<div style="height: 70px; " class="well well-sm"><h3><strong><a style="color: #000000;" href="content.php?id='.$row["id"].'"> <i class="icon-chevron-sign-right"></i>'.$row["lectureName"].'</a></strong></h3></div>';
+	} 
+}else{
+echo "<h3 class='center'>Sorry, Content not available</h3>";
+}
+}
+?>
+
+//****** Display Content
+<?php
+
+if(isset($_GET['id'])){
+
+$content_Id = $_GET['id'];
+
+$query = "SELECT * FROM `content` WHERE id= '$content_Id'";
+
+$result = mysqli_query($connection, $query);
+
+if(mysqli_num_rows($result) > 0){
+
+	 while( $row = mysqli_fetch_assoc($result) ){
+		
+		$lecureContent = $row['content'];
+		$lectureName = $row['lectureName'];
+
+	}
+
+}else {
+
+	echo '<h1>No Content Found..!</h1>';
+
+	$lecureContent = " ";
+		$lectureName = " ";
+
+
+   } 
+}else{
+echo '<script type="text/javascript">
+  window.location = "course.php"
+</script>';
+}
+
+?>
 
 </div>
 </div>
